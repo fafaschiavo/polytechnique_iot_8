@@ -49,7 +49,6 @@ public class Database{
 	// Return current sequence number - for our own database
 	// /////////////////////////////////////////////////////////////////////////////////////////////
 	public int getInternalDatabaseSequenceNumber(){
-		System.out.println("=============================== Let's check the folder");
 		File folder = new File("rootfolder/mysharefilesfolder/");
 		File[] listOfFiles = folder.listFiles();
 

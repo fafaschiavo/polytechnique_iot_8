@@ -215,6 +215,9 @@ public class MuxDemuxSimple implements Runnable{
 			new Thread(handlers[4]).start();
 			new Thread(handlers[5]).start();
 
+			FileServer file_server = new FileServer("rootfolder/mysharefilesfolder/");
+			new Thread(file_server).start();
+
 			// Launch reading Thread
 			new Thread(dm).start();
 			try {
