@@ -30,12 +30,14 @@ public class MuxDemuxSimple implements Runnable{
     private HashMap<String, Peer> peer_table = new HashMap<String, Peer>();
     private Database self_database;
     private HashMap<String, Database> peer_databases = new HashMap<String, Database>();
+    private FileReceiver file_receciver = new FileReceiver("rootfolder/");
 
 	MuxDemuxSimple(SimpleMessageHandler[] h, DatagramSocket s, String constructor_ID){
 		myS = s;
 		myMessageHandlers = h;
 		myID = constructor_ID;
 		self_database = new Database(myID);
+		new Thread(file_receciver).start();
 	}
 
 	public void run(){
@@ -176,6 +178,9 @@ public class MuxDemuxSimple implements Runnable{
 
 	public void add_to_database(String peerID, String content){
 		peer_databases.get(peerID).add_to_database(content);
+
+		InetAddress ip_address = peer_table.get(peerID).get_peer_IP_address();
+		file_receciver.handleFile(peerID, content, ip_address);
 	}
 
 	public void clear_database(String peerID){

@@ -62,7 +62,7 @@ public class ListReceiver implements SimpleMessageHandler{
 
 					}
 
-					if (peer_sync_current.get(sender_id) == (peer_sync_total.get(sender_id) - 1)) {
+					if (peer_sync_current.get(sender_id) == (peer_sync_total.get(sender_id))) {
                         peer_sync_total.remove(sender_id);
                         peer_sync_current.remove(sender_id);
                         peer_sync_sequence_number.remove(sender_id);

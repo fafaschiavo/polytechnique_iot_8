@@ -70,6 +70,10 @@ public class Peer{
 		return peerID;
 	}
 
+	public InetAddress get_peer_IP_address(){
+		return peerIPAddress;
+	}
+
 	public String get_peer_state(){
 		return peerState;
 	}

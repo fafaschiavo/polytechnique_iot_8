@@ -64,4 +64,12 @@ public class SynchronizedListQueue{
     }
   }
 
+  public Boolean contains_element(String element){
+    if (queue.contains(element)) {
+      return true;
+    }else{
+      return false;
+    }
+  }
+
 }
