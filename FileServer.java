@@ -53,10 +53,10 @@ public class FileServer implements Runnable{
                             
                             while (fis.read(buffer) > 0) {
                                 dos.write(buffer);
+                                dos.flush();
                             }
                             
                             fis.close();
-                            dos.flush();
                             dos.close();
 
                         }

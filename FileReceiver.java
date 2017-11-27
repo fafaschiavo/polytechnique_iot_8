@@ -90,9 +90,9 @@ public class FileReceiver implements Runnable{
                     remaining -= read;
                     System.out.println("read " + totalRead + " bytes.");
                     fos.write(buffer, 0, read);
+                    fos.flush();
                 }
                 
-                fos.flush();
                 fos.close();
                 dis.close();
 
