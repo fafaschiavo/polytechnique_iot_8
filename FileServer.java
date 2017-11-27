@@ -40,44 +40,20 @@ public class FileServer implements Runnable{
 
                             System.out.println("Now Serving: " + file_to_serve);
 
-                            byte[] mybytearray = new byte[(int) listOfFiles[i].length()];
-                            BufferedInputStream bis = new BufferedInputStream(new FileInputStream(listOfFiles[i]));
-                            bis.read(mybytearray, 0, mybytearray.length);
-                            OutputStream os = client_socket.getOutputStream();
-                            os.write(mybytearray, 0, mybytearray.length);
-                            os.flush();
-                            client_socket.close();
 
 
 
-
-                            // try{ 
-                            //     System.out.println("Now Serving: " + file_to_serve);
-                            //     String message_to_send = file_to_serve+"\n";
-
-                            //     client_socket.getOutputStream().write(message_to_send.getBytes("UTF-8"));
-                                
-                            //     Long file_size = listOfFiles[i].length();
-                            //     message_to_send = Long.toString(file_size)+"\n";
-                            //     client_socket.getOutputStream().write(message_to_send.getBytes("UTF-8"));
-
-                            //     byte [] mybytearray  = new byte [(int) (long)file_size];
-                            //     fis = new FileInputStream(listOfFiles[i]);
-                            //     bis = new BufferedInputStream(fis);
-                            //     bis.read(mybytearray,0,mybytearray.length);
-                            //     os = client_socket.getOutputStream();
-                            //     os.write(mybytearray,0,mybytearray.length);
-                            //     os.flush();
-                            // }finally {
-                            //     if (bis != null) bis.close();
-                            //     if (os != null) os.close();
-                            //     // if (sock!=null) sock.close();
-                            // }
-
-
-
-
-
+                            ServerSocket servsock = new ServerSocket(4242);
+                            while (true) {
+                                Socket sock = servsock.accept();
+                                byte[] mybytearray = new byte[(int) listOfFiles[i].length()];
+                                BufferedInputStream bis = new BufferedInputStream(new FileInputStream(listOfFiles[i]));
+                                bis.read(mybytearray, 0, mybytearray.length);
+                                OutputStream os = sock.getOutputStream();
+                                os.write(mybytearray, 0, mybytearray.length);
+                                os.flush();
+                                sock.close();
+                            }
 
 
 
