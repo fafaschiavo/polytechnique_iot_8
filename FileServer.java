@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.OutputStream;
 import java.io.BufferedInputStream;
+import java.io.DataOutputStream;
 
 public class FileServer implements Runnable{
 
@@ -26,7 +27,6 @@ public class FileServer implements Runnable{
             BufferedReader reader = new BufferedReader(isr);
             String line = reader.readLine();
             String requested_path = "";
-            FileInputStream fis = null;
             BufferedInputStream bis = null;
             OutputStream os = null;
             while (!line.isEmpty()) {                
@@ -37,28 +37,26 @@ public class FileServer implements Runnable{
                     File[] listOfFiles = folder.listFiles();
                     for (int i = 0; i < listOfFiles.length; i++) {
                         if (listOfFiles[i].isFile() && listOfFiles[i].getName().equals(file_to_serve)) {
-                            try{ 
-                                System.out.println("Now Serving: " + file_to_serve);
-                                String message_to_send = file_to_serve+"\n";
+                            
+                            System.out.println("Now Serving: " + file_to_serve);
+                            String message_to_send = file_to_serve+"\n";
 
-                                client_socket.getOutputStream().write(message_to_send.getBytes("UTF-8"));
-                                
-                                Long file_size = listOfFiles[i].length();
-                                message_to_send = Long.toString(file_size)+"\n";
-                                client_socket.getOutputStream().write(message_to_send.getBytes("UTF-8"));
+                            client_socket.getOutputStream().write(message_to_send.getBytes("UTF-8"));
+                            
+                            Long file_size = listOfFiles[i].length();
+                            message_to_send = Long.toString(file_size)+"\n";
+                            client_socket.getOutputStream().write(message_to_send.getBytes("UTF-8"));
 
-                                byte [] mybytearray  = new byte [(int) (long)file_size];
-                                fis = new FileInputStream(listOfFiles[i]);
-                                bis = new BufferedInputStream(fis);
-                                bis.read(mybytearray,0,mybytearray.length);
-                                os = client_socket.getOutputStream();
-                                os.write(mybytearray,0,mybytearray.length);
-                                os.flush();
-                            }finally {
-                                if (bis != null) bis.close();
-                                if (os != null) os.close();
-                                // if (sock!=null) sock.close();
+                            DataOutputStream dos = new DataOutputStream(client_socket.getOutputStream());
+                            FileInputStream fis = new FileInputStream(listOfFiles[i]);
+                            byte[] buffer = new byte[4096];
+                            
+                            while (fis.read(buffer) > 0) {
+                                dos.write(buffer);
                             }
+                            
+                            fis.close();
+                            dos.close();
 
                         }
                     }

@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
+import java.io.DataInputStream;
 
 public class FileReceiver implements Runnable{
 
@@ -63,40 +64,46 @@ public class FileReceiver implements Runnable{
                     catch(SecurityException se){}        
                     if(result) {}
                 }
-                
+            
                 FileOutputStream fos = new FileOutputStream(root_folder + peer_id + "/" + file_name);
                 BufferedOutputStream bos = new BufferedOutputStream(fos);
                 Socket sock = new Socket(ip_to_request, 4242);
-                try{
-                    String message_to_send = "get " + file_name + "\n";
-                    sock.getOutputStream().write(message_to_send.getBytes("UTF-8"));
 
-                    InputStreamReader isr =  new  InputStreamReader(sock.getInputStream());
-                    BufferedReader reader = new BufferedReader(isr);
-                    String line = reader.readLine();
-                    line = reader.readLine();
-                    int file_size = Integer.parseInt(line);
+                String message_to_send = "get " + file_name + "\n";
+                sock.getOutputStream().write(message_to_send.getBytes("UTF-8"));
 
-                    // receive file
-                    int bytesRead;
-                    int current = 0;
-                    byte [] mybytearray  = new byte [file_size];
-                    InputStream is = sock.getInputStream();
-                    bytesRead = is.read(mybytearray,0,mybytearray.length);
-                    current = bytesRead;
+                InputStreamReader isr =  new  InputStreamReader(sock.getInputStream());
+                BufferedReader reader = new BufferedReader(isr);
+                String line = reader.readLine();
+                line = reader.readLine();
+                int file_size = Integer.parseInt(line);
+                System.out.println("============================================================ File size: " + file_size);
 
-                    do {
-                       bytesRead = is.read(mybytearray, current, (mybytearray.length-current));
-                       if(bytesRead >= 0) current += bytesRead;
-                    } while(bytesRead > -1);
 
-                    bos.write(mybytearray, 0 , current);
-                    bos.flush();
-                } finally {
-                    // if (fos != null) fos.close();
-                    // if (bos != null) bos.close();
-                    // if (sock != null) sock.close();
+                DataInputStream dis = new DataInputStream(sock.getInputStream());
+                byte[] buffer = new byte[4096];
+                
+                int filesize = file_size; // Send file size in separate msg
+                int read = 0;
+                int totalRead = 0;
+                int remaining = filesize;
+                while((read = dis.read(buffer, 0, Math.min(buffer.length, remaining))) > 0) {
+                    totalRead += read;
+                    remaining -= read;
+                    System.out.println("read " + totalRead + " bytes.");
+                    fos.write(buffer, 0, read);
                 }
+                
+                fos.close();
+                dis.close();
+
+
+
+
+
+
+
+
 
 
 
