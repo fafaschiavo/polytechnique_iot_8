@@ -44,7 +44,7 @@ public class FileReceiver implements Runnable{
         while (true){
 
             // /////////////////////////////////////////////////////////////////////////////////////////////
-            // FileReceiver only dequeue files, request and download them
+            // FileReceiver only dequeues files, requests and downloads them
             // /////////////////////////////////////////////////////////////////////////////////////////////
             try{
                 String file_name = incoming.dequeue();
@@ -92,6 +92,7 @@ public class FileReceiver implements Runnable{
                     fos.write(buffer, 0, read);
                 }
                 
+                fos.flush();
                 fos.close();
                 dis.close();
 
