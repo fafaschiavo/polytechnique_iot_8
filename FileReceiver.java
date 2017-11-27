@@ -56,17 +56,12 @@ public class FileReceiver implements Runnable{
                 if (!theDir.exists()) {
                     System.out.println("creating directory: " + theDir.getName());
                     boolean result = false;
-
                     try{
                         theDir.mkdir();
                         result = true;
                     } 
-                    catch(SecurityException se){
-                        //handle it
-                    }        
-                    if(result) {    
-                        System.out.println("DIR created");  
-                    }
+                    catch(SecurityException se){}        
+                    if(result) {}
                 }
                 
                 FileOutputStream fos = new FileOutputStream(root_folder + peer_id + "/" + file_name);
@@ -98,9 +93,9 @@ public class FileReceiver implements Runnable{
                     bos.write(mybytearray, 0 , current);
                     bos.flush();
                 } finally {
-                    if (fos != null) fos.close();
-                    if (bos != null) bos.close();
-                    if (sock != null) sock.close();
+                    // if (fos != null) fos.close();
+                    // if (bos != null) bos.close();
+                    // if (sock != null) sock.close();
                 }
 
 
