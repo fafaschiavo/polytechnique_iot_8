@@ -26,9 +26,9 @@ public class FileServer implements Runnable{
             BufferedReader reader = new BufferedReader(isr);
             String line = reader.readLine();
             String requested_path = "";
-            FileInputStream fis = null;
-            BufferedInputStream bis = null;
-            OutputStream os = null;
+            // FileInputStream fis = null;
+            // BufferedInputStream bis = null;
+            // OutputStream os = null;
             while (!line.isEmpty()) {                
                 if (line.toLowerCase().startsWith("get")) {
                     String file_to_serve = line.split(" ")[1].split("\n")[0];
@@ -37,28 +37,51 @@ public class FileServer implements Runnable{
                     File[] listOfFiles = folder.listFiles();
                     for (int i = 0; i < listOfFiles.length; i++) {
                         if (listOfFiles[i].isFile() && listOfFiles[i].getName().equals(file_to_serve)) {
-                            try{ 
-                                System.out.println("Now Serving: " + file_to_serve);
-                                String message_to_send = file_to_serve+"\n";
 
-                                client_socket.getOutputStream().write(message_to_send.getBytes("UTF-8"));
+                            System.out.println("Now Serving: " + file_to_serve);
+
+                            byte[] mybytearray = new byte[(int) listOfFiles[i].length()];
+                            BufferedInputStream bis = new BufferedInputStream(new FileInputStream(listOfFiles[i]));
+                            bis.read(mybytearray, 0, mybytearray.length);
+                            OutputStream os = client_socket.getOutputStream();
+                            os.write(mybytearray, 0, mybytearray.length);
+                            os.flush();
+                            client_socket.close();
+
+
+
+
+                            // try{ 
+                            //     System.out.println("Now Serving: " + file_to_serve);
+                            //     String message_to_send = file_to_serve+"\n";
+
+                            //     client_socket.getOutputStream().write(message_to_send.getBytes("UTF-8"));
                                 
-                                Long file_size = listOfFiles[i].length();
-                                message_to_send = Long.toString(file_size)+"\n";
-                                client_socket.getOutputStream().write(message_to_send.getBytes("UTF-8"));
+                            //     Long file_size = listOfFiles[i].length();
+                            //     message_to_send = Long.toString(file_size)+"\n";
+                            //     client_socket.getOutputStream().write(message_to_send.getBytes("UTF-8"));
 
-                                byte [] mybytearray  = new byte [(int) (long)file_size];
-                                fis = new FileInputStream(listOfFiles[i]);
-                                bis = new BufferedInputStream(fis);
-                                bis.read(mybytearray,0,mybytearray.length);
-                                os = client_socket.getOutputStream();
-                                os.write(mybytearray,0,mybytearray.length);
-                                os.flush();
-                            }finally {
-                                if (bis != null) bis.close();
-                                if (os != null) os.close();
-                                // if (sock!=null) sock.close();
-                            }
+                            //     byte [] mybytearray  = new byte [(int) (long)file_size];
+                            //     fis = new FileInputStream(listOfFiles[i]);
+                            //     bis = new BufferedInputStream(fis);
+                            //     bis.read(mybytearray,0,mybytearray.length);
+                            //     os = client_socket.getOutputStream();
+                            //     os.write(mybytearray,0,mybytearray.length);
+                            //     os.flush();
+                            // }finally {
+                            //     if (bis != null) bis.close();
+                            //     if (os != null) os.close();
+                            //     // if (sock!=null) sock.close();
+                            // }
+
+
+
+
+
+
+
+
+
 
                         }
                     }
