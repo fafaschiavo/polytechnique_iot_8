@@ -54,33 +54,58 @@ public class FileReceiver implements Runnable{
                 // create the folder if it doesn't exist
                 File theDir = new File(root_folder + peer_id + "/");
                 if (!theDir.exists()) {
+                    System.out.println("creating directory: " + theDir.getName());
                     boolean result = false;
+
                     try{
                         theDir.mkdir();
                         result = true;
                     } 
-                    catch(SecurityException se){}        
+                    catch(SecurityException se){
+                        //handle it
+                    }        
+                    if(result) {    
+                        System.out.println("DIR created");  
+                    }
                 }
                 
-                // receive file
                 FileOutputStream fos = new FileOutputStream(root_folder + peer_id + "/" + file_name);
                 BufferedOutputStream bos = new BufferedOutputStream(fos);
                 Socket sock = new Socket(ip_to_request, 4242);
+                try{
+                    String message_to_send = "get " + file_name + "\n";
+                    sock.getOutputStream().write(message_to_send.getBytes("UTF-8"));
 
-                String message_to_send = "get " + file_name + "\n";
-                sock.getOutputStream().write(message_to_send.getBytes("UTF-8"));
+                    InputStreamReader isr =  new  InputStreamReader(sock.getInputStream());
+                    BufferedReader reader = new BufferedReader(isr);
+                    String line = reader.readLine();
+                    line = reader.readLine();
+                    int file_size = Integer.parseInt(line);
 
-                InputStreamReader isr =  new  InputStreamReader(sock.getInputStream());
-                BufferedReader reader = new BufferedReader(isr);
-                String line = reader.readLine();
-                line = reader.readLine();
-                int file_size = Integer.parseInt(line);
-                byte[] mybytearray = new byte[file_size];
-                InputStream is = sock.getInputStream();
-                int bytesRead = is.read(mybytearray, 0, mybytearray.length);
-                bos.write(mybytearray, 0, bytesRead);
-                bos.close();
-                sock.close();
+                    // receive file
+                    int bytesRead;
+                    int current = 0;
+                    byte [] mybytearray  = new byte [file_size];
+                    InputStream is = sock.getInputStream();
+                    bytesRead = is.read(mybytearray,0,mybytearray.length);
+                    current = bytesRead;
+
+                    do {
+                       bytesRead = is.read(mybytearray, current, (mybytearray.length-current));
+                       if(bytesRead >= 0) current += bytesRead;
+                    } while(bytesRead > -1);
+
+                    bos.write(mybytearray, 0 , current);
+                    bos.flush();
+                } finally {
+                    if (fos != null) fos.close();
+                    if (bos != null) bos.close();
+                    if (sock != null) sock.close();
+                }
+
+
+
+
 
                 try {
                   Thread.sleep(200);
