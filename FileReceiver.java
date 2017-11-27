@@ -77,8 +77,6 @@ public class FileReceiver implements Runnable{
                 String line = reader.readLine();
                 line = reader.readLine();
                 int file_size = Integer.parseInt(line);
-                System.out.println("============================================================ File size: " + file_size);
-
 
                 DataInputStream dis = new DataInputStream(sock.getInputStream());
                 byte[] buffer = new byte[4096];
@@ -96,24 +94,6 @@ public class FileReceiver implements Runnable{
                 
                 fos.close();
                 dis.close();
-
-
-
-
-
-
-
-
-
-
-
-
-
-                try {
-                  Thread.sleep(200);
-                } catch(InterruptedException ex) {
-                  Thread.currentThread().interrupt();
-                }
 
             } catch (NoSuchElementException e){
                 // Nothing in queue
