@@ -68,7 +68,7 @@ public class FileServer implements Runnable{
             }
 
         } catch (Exception e){
-            System.err.println(e);
+            // System.err.println(e);
         }
 
     }

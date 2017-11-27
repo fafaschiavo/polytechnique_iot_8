@@ -11,6 +11,9 @@ import java.io.FileInputStream;
 import java.io.OutputStream;
 import java.io.BufferedInputStream;
 import java.util.HashMap;
+import java.io.BufferedOutputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 
 public class FileReceiver implements Runnable{
 
@@ -45,29 +48,56 @@ public class FileReceiver implements Runnable{
             try{
                 String file_name = incoming.dequeue();
                 InetAddress ip_to_request = ip_addresses.get(file_name);
-                System.out.println("============================================================ Dequeueing: " + file_name + " | " + ip_to_request);
+                String peer_id = peer_ids.get(file_name);
+                System.out.println("============================================================ Dequeueing: " + file_name);
 
+                // create the folder if it doesn't exist
+                File theDir = new File(root_folder + peer_id + "/");
+                if (!theDir.exists()) {
+                    boolean result = false;
+                    try{
+                        theDir.mkdir();
+                        result = true;
+                    } 
+                    catch(SecurityException se){}        
+                }
                 
-                String message_to_send = "get " + file_name + "\n";
+                // receive file
+                FileOutputStream fos = new FileOutputStream(root_folder + peer_id + "/" + file_name);
+                BufferedOutputStream bos = new BufferedOutputStream(fos);
                 Socket sock = new Socket(ip_to_request, 4242);
-                sock.getOutputStream().write(message_to_send.getBytes("UTF-8"));
+                try{
+                    String message_to_send = "get " + file_name + "\n";
+                    sock.getOutputStream().write(message_to_send.getBytes("UTF-8"));
 
-                // // receive file
-                // byte [] mybytearray  = new byte [FILE_SIZE];
-                // InputStream is = sock.getInputStream();
-                // fos = new FileOutputStream(FILE_TO_RECEIVED);
-                // bos = new BufferedOutputStream(fos);
-                // bytesRead = is.read(mybytearray,0,mybytearray.length);
-                // current = bytesRead;
+                    InputStreamReader isr =  new  InputStreamReader(sock.getInputStream());
+                    BufferedReader reader = new BufferedReader(isr);
+                    String line = reader.readLine();
+                    line = reader.readLine();
+                    int file_size = Integer.parseInt(line);
 
-                // do {
-                //    bytesRead =
-                //       is.read(mybytearray, current, (mybytearray.length-current));
-                //    if(bytesRead >= 0) current += bytesRead;
-                // } while(bytesRead > -1);
+                    int bytesRead;
+                    int current = 0;
+                    byte [] mybytearray  = new byte [file_size];
+                    InputStream is = sock.getInputStream();
+                    bytesRead = is.read(mybytearray,0,mybytearray.length);
+                    current = bytesRead;
 
-                // bos.write(mybytearray, 0 , current);
-                // bos.flush();
+                    do {
+                       bytesRead = is.read(mybytearray, current, (mybytearray.length-current));
+                       if(bytesRead >= 0) current += bytesRead;
+                    } while(bytesRead > -1);
+
+                    bos.write(mybytearray, 0 , current);
+                    bos.flush();
+                } finally {
+                    if (fos != null) fos.close();
+                    if (bos != null) bos.close();
+                    if (sock != null) sock.close();
+                }
+
+
+
 
 
                 try {
@@ -78,10 +108,13 @@ public class FileReceiver implements Runnable{
 
             } catch (NoSuchElementException e){
                 // Nothing in queue
-            } catch (RuntimeException e){
-                // Message received is not a Hello, so just ignore it
-            } catch (IOException e){
-                // Just in case of connection problems
+            // } catch (RuntimeException e){
+            //     // Message received is not a Hello, so just ignore it
+            // } catch (IOException e){
+            //     // Just in case of connection problems
+            // }
+            } catch (Exception e){
+                System.err.println(e);
             }
 
         }

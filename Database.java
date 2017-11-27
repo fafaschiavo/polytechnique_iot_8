@@ -55,7 +55,7 @@ public class Database{
 		if (table.size() == 0 && sequence_number == -1) {
 			sequence_number = 0;
 			for (int i = 0; i < listOfFiles.length; i++) {
-				if (listOfFiles[i].isFile()) {
+				if (listOfFiles[i].isFile() && !listOfFiles[i].getName().equals(".DS_Store")) {
 					table.add(listOfFiles[i].getName());
 				}
 			}
