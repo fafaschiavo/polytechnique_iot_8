@@ -26,6 +26,9 @@ public class FileServer implements Runnable{
             BufferedReader reader = new BufferedReader(isr);
             String line = reader.readLine();
             String requested_path = "";
+            FileInputStream fis = null;
+            BufferedInputStream bis = null;
+            OutputStream os = null;
             while (!line.isEmpty()) {                
                 if (line.toLowerCase().startsWith("get")) {
                     String file_to_serve = line.split(" ")[1].split("\n")[0];
@@ -44,9 +47,6 @@ public class FileServer implements Runnable{
                                 message_to_send = Long.toString(file_size)+"\n";
                                 client_socket.getOutputStream().write(message_to_send.getBytes("UTF-8"));
 
-                                FileInputStream fis = null;
-                                BufferedInputStream bis = null;
-                                OutputStream os = null;
                                 byte [] mybytearray  = new byte [(int) (long)file_size];
                                 fis = new FileInputStream(listOfFiles[i]);
                                 bis = new BufferedInputStream(fis);
