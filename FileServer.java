@@ -37,7 +37,7 @@ public class FileServer implements Runnable{
                     File[] listOfFiles = folder.listFiles();
                     for (int i = 0; i < listOfFiles.length; i++) {
                         if (listOfFiles[i].isFile() && listOfFiles[i].getName().equals(file_to_serve)) {
-                            
+
                             System.out.println("Now Serving: " + file_to_serve);
                             String message_to_send = file_to_serve+"\n";
 
@@ -56,6 +56,7 @@ public class FileServer implements Runnable{
                             }
                             
                             fis.close();
+                            dos.flush();
                             dos.close();
 
                         }
