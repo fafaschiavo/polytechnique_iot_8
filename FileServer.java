@@ -44,16 +44,14 @@ public class FileServer implements Runnable{
 
 
                             ServerSocket servsock = new ServerSocket(4242);
-                            while (true) {
-                                Socket sock = servsock.accept();
-                                byte[] mybytearray = new byte[(int) listOfFiles[i].length()];
-                                BufferedInputStream bis = new BufferedInputStream(new FileInputStream(listOfFiles[i]));
-                                bis.read(mybytearray, 0, mybytearray.length);
-                                OutputStream os = sock.getOutputStream();
-                                os.write(mybytearray, 0, mybytearray.length);
-                                os.flush();
-                                sock.close();
-                            }
+                            Socket sock = servsock.accept();
+                            byte[] mybytearray = new byte[(int) listOfFiles[i].length()];
+                            BufferedInputStream bis = new BufferedInputStream(new FileInputStream(listOfFiles[i]));
+                            bis.read(mybytearray, 0, mybytearray.length);
+                            OutputStream os = sock.getOutputStream();
+                            os.write(mybytearray, 0, mybytearray.length);
+                            os.flush();
+                            sock.close();
 
 
 
