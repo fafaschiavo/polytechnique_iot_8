@@ -50,7 +50,6 @@ public class FileReceiver implements Runnable{
                 String file_name = incoming.dequeue();
                 InetAddress ip_to_request = ip_addresses.get(file_name);
                 String peer_id = peer_ids.get(file_name);
-                System.out.println("============================================================ Dequeueing: " + file_name);
 
                 // create the folder if it doesn't exist
                 File theDir = new File(root_folder + peer_id + "/");
