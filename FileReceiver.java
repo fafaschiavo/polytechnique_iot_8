@@ -98,13 +98,10 @@ public class FileReceiver implements Runnable{
 
             } catch (NoSuchElementException e){
                 // Nothing in queue
-            // } catch (RuntimeException e){
-            //     // Message received is not a Hello, so just ignore it
-            // } catch (IOException e){
-            //     // Just in case of connection problems
-            // }
-            } catch (Exception e){
-                System.err.println(e);
+            } catch (RuntimeException e){
+                // Message received is not a Hello, so just ignore it
+            } catch (IOException e){
+                // Just in case of connection problems
             }
 
         }
